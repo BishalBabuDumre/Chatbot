@@ -37,5 +37,4 @@ class NLPChatbot:
 
 # Usage
 bot = NLPChatbot()
-print(bot.respond("When are you open?"))
-print(bot.respond("How do I get in touch with customer service?"))
+print(bot.respond(input("What is your concern today?")))
