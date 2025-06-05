@@ -8,7 +8,7 @@ import os
 app = FastAPI()
 
 # Mount static files (for CSS/JS)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="docs/static"), name="static")
 
 # Templates for HTML responses
 templates = Jinja2Templates(directory="templates")
