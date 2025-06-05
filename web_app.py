@@ -11,7 +11,7 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="docs/static"), name="static")
 
 # Templates for HTML responses
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="docs")
 
 @app.get("/", response_class=HTMLResponse)
 async def chat_page(request: Request):
