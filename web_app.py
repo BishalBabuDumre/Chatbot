@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from use_chatbot import chatbot_response  # import your existing function
+from use_chatbot import NLPChatbot  # import your existing function
 import os
 
 app = FastAPI()
@@ -27,7 +27,7 @@ async def chat_endpoint(request: Request):
         if not user_input:
             raise HTTPException(status_code=400, detail="Message is required")
         
-        response = chatbot_response(user_input)
+        response = NLPChatbot().respond(user_input)
         return JSONResponse({"response": response})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
