@@ -12,7 +12,9 @@ class NLPChatbotTrainer:
             {"question": "Do you offer refunds?", 
              "answer": "Yes, we offer 30-day refunds for unused products."},
             {"question": "Where is your company located?", 
-             "answer": "Our headquarters is at 123 Main St, Anytown, USA."}
+             "answer": "Our headquarters is at 123 Main St, Anytown, USA."},
+            {"question": "What are your major products?", 
+             "answer": "We provide Large Language Model (LLM) based services."}
         ]
         
         self.questions = [pair["question"] for pair in self.qa_pairs]
