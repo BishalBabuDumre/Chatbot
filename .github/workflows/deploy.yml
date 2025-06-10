@@ -1,33 +1,83 @@
-name: Deploy to GitHub Pages
+name: Train Chatbot Model
 
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'bot_trainer.py'
+      - 'use_chatbot.py'
+      - 'web_app.py'
+      - 'docs/**'
+  
+  # Trigger on fork events
+  fork:
+  
+  # Trigger on pull requests targeting main
+  pull_request:
+    branches: [ main ]
+  
+  # Manual trigger
   workflow_dispatch:
 
 jobs:
-  deploy:
+  train:
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3
       
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install numpy scikit-learn fastapi uvicorn
+        
+    - name: Train chatbot model
+      run: python bot_trainer.py
       
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install fastapi uvicorn jinja2
+    - name: Upload model artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: chatbot-model
+        path: chatbot_model.pkl
+        
+    - name: Notify on fork or push
+      if: github.event_name == 'fork' || (github.event_name == 'push' && github.actor != 'BishalBabuDumre')
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: `Repository activity by ${context.actor}`,
+            body: `Activity type: ${context.event_name}\n\nTriggered by: @${context.actor}\n\nView details: ${context.payload.repository.html_url}/actions/runs/${context.runId}`,
+            labels: ['notification']
+          })
+
+  deploy:
+    needs: train
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
       
-      - name: Train model
-        run: python bot_trainer.py
-      
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
-          keep_files: true
+    - name: Download model artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: chatbot-model
+        path: ./
+        
+    - name: Commit and push trained model
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        git add chatbot_model.pkl
+        git diff --quiet && git diff --staged --quiet || git commit -m "Update chatbot model [skip ci]"
+        git push
