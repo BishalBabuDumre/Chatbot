@@ -8,6 +8,9 @@ on:
       - 'use_chatbot.py'
       - 'web_app.py'
       - 'docs/**'
+  
+  # Manual trigger
+  workflow_dispatch:
 
 jobs:
   train:
@@ -57,7 +60,9 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-      
+      with:
+        persist-credentials: true  # This is important for maintaining auth
+    
     - name: Download model artifact
       uses: actions/download-artifact@v4
       with:
@@ -70,5 +75,4 @@ jobs:
         git config --global user.email "actions@github.com"
         git add chatbot_model.pkl
         git diff --quiet && git diff --staged --quiet || git commit -m "Update chatbot model [skip ci]"
-        git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/${{ github.repository }}.git
         git push origin HEAD
