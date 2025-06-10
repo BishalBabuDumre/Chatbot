@@ -70,7 +70,7 @@ jobs:
         path: ./
         
     - name: Commit and push trained model
-        run: |
+      run:  |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add chatbot_model.pkl
