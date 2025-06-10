@@ -8,16 +8,6 @@ on:
       - 'use_chatbot.py'
       - 'web_app.py'
       - 'docs/**'
-  
-  # Trigger on fork events
-  fork:
-  
-  # Trigger on pull requests targeting main
-  pull_request:
-    branches: [ main ]
-  
-  # Manual trigger
-  workflow_dispatch:
 
 jobs:
   train:
