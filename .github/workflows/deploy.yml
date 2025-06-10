@@ -59,10 +59,11 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4  # Updated to v4
       with:
-        persist-credentials: true  # This is important for maintaining auth
-    
+        token: ${{ secrets.GH_PAT }}  # Explicitly use your PAT
+        fetch-depth: 0  # Fetches all history for all branches
+  
     - name: Download model artifact
       uses: actions/download-artifact@v4
       with:
@@ -70,10 +71,9 @@ jobs:
         path: ./
         
     - name: Commit and push trained model
-      run:  |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git add chatbot_model.pkl
-          git diff --quiet && git diff --staged --quiet || git commit -m "Update chatbot model [skip ci]"
-          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/${{ github.repository }}.git
-          git push origin HEAD
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        git add chatbot_model.pkl
+        git commit -m "Update chatbot model [skip ci]" || echo "No changes to commit"
+        git push origin HEAD
