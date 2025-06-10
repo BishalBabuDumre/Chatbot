@@ -41,7 +41,7 @@ jobs:
       run: python bot_trainer.py
       
     - name: Upload model artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: chatbot-model
         path: chatbot_model.pkl
