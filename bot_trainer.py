@@ -16,7 +16,9 @@ class NLPChatbotTrainer:
             {"question": "What are your major products?", 
              "answer": "We provide Large Language Model (LLM) based services."},
             {"question": "How long do you require to deliver the product?", 
-             "answer": "We deliver our products within a week."}
+             "answer": "We deliver our products within a week."},
+            {"question": "What are the forms of payment?", 
+             "answer": "You can use Debit/Credit Card, Bank Account, or pay cash when you are in-person at our store."}
         ]
         
         self.questions = [pair["question"] for pair in self.qa_pairs]
