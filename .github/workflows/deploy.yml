@@ -4,6 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
+      - 'qa_pairs.json'
       - 'bot_trainer.py'
       - 'use_chatbot.py'
       - 'web_app.py'
