@@ -1,31 +1,31 @@
 {
   "qa_pairs": [
     {
-      "question": "opening hours",
+      "question": "opening hours open opened",
       "answer": "We're open Monday to Friday, 9 AM to 5 PM."
     },
     {
-      "question": "How can I contact support?",
+      "question": "contact support talk converse",
       "answer": "Email us at support@company.com or call (555) 123-4567."
     },
     {
-      "question": "Do you offer refunds?",
+      "question": "offer refunds give back",
       "answer": "Yes, we offer 30-day refunds for unused products."
     },
     {
-      "question": "Where is your company located?",
+      "question": "company located address place",
       "answer": "Our headquarters is at 123 Main St, Anytown, USA."
     },
     {
-      "question": "What are your major products?",
+      "question": "major products ",
       "answer": "We provide Large Language Model (LLM) based services."
     },
     {
-      "question": "How long do you require to deliver the product?",
+      "question": "long deliver delivery",
       "answer": "We deliver our products within a week."
     },
     {
-      "question": "What are the forms of payment?",
+      "question": "forms payment pay fee fees",
       "answer": "You can use either Debit/Credit Card, Bank Account, or pay cash when you are in-person at our office outlet."
     }
   ]
