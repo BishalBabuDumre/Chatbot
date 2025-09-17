@@ -1,94 +1,48 @@
 from fastapi import FastAPI, Form, Request
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-import psycopg2
-from pydantic import BaseModel
-import os
+import psycopg2, os
 
-# -------------------------------
-# FastAPI setup
-# -------------------------------
 app = FastAPI()
 
-# Mount static files (style.css, script.js) from docs/static/
-app.mount("/static", StaticFiles(directory=os.path.join("docs", "static")), name="static")
+# Serve static files (CSS/JS)
+app.mount("/static", StaticFiles(directory="doc/static"), name="static")
+templates = Jinja2Templates(directory="doc")
 
-# Setup Jinja2 templates (index.html in docs/)
-templates = Jinja2Templates(directory="docs")
+# Database connection
+def get_connection():
+    return psycopg2.connect(
+        host=os.getenv("DB_HOST"),
+        port=os.getenv("DB_PORT"),
+        dbname=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD")
+    )
 
-# -------------------------------
-# PostgreSQL connection (AWS RDS)
-# -------------------------------
-conn = psycopg2.connect(
-    host="chatbot-users.c9mci8a4irlr.us-west-1.rds.amazonaws.com",  # e.g. mydb.xxxxx.rds.amazonaws.com
-    database="postgres",
-    user="bdumrePostgres",
-    password=os.getenv("DB_PASSWORD"),
-    port="5432"
-)
-
-# -------------------------------
-# Request Models
-# -------------------------------
-class UserInfo(BaseModel):
-    full_name: str
-    address: str
-    state: str
-    zip_code: str
-
-class ChatMessage(BaseModel):
-    message: str
-
-# -------------------------------
-# Routes
-# -------------------------------
-
+# Home page
 @app.get("/", response_class=HTMLResponse)
-async def home(request: Request):
-    """Render the main page with form + chatbox"""
+async def get_home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-
+# Save user info
 @app.post("/save_user")
-async def save_user( 
+async def save_user(
     full_name: str = Form(...),
     address: str = Form(...),
     state: str = Form(...),
     zip_code: str = Form(...)
 ):
-    """Save user info to PostgreSQL"""
     try:
+        conn = get_connection()
         cur = conn.cursor()
         cur.execute(
-            """
-            INSERT INTO users (full_name, address, state, zip_code)
-            VALUES (%s, %s, %s, %s)
-            """,
-            (user.full_name, user.address, user.state, user.zip_code),
+            "INSERT INTO users (full_name, address, state, zip_code) VALUES (%s, %s, %s, %s)",
+            (full_name, address, state, zip_code)
         )
         conn.commit()
         cur.close()
-        return {"message": "User saved successfully"}
+        conn.close()
+        return JSONResponse(content={"status": "success"})
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
-
-
-@app.post("/chat")
-async def chat(msg: ChatMessage):
-    """Simple chatbot logic"""
-    user_message = msg.message.strip()
-
-    # 🔹 Replace with real chatbot logic later
-    if "hello" in user_message.lower():
-        bot_response = "Hi there! How can I help you today?"
-    else:
-        bot_response = f"You said: {user_message}"
-
-    return {"response": bot_response}
-
-
-# -------------------------------
-# Run the app (with uvicorn)
-# -------------------------------
-# Run using: uvicorn web_app:app --reload --host 0.0.0.0 --port 8000
+        return JSONResponse(content={"status": "error", "detail": str(e)})
