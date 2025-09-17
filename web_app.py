@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Form, Request
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -51,7 +51,12 @@ async def home(request: Request):
 
 
 @app.post("/save_user")
-async def save_user(user: UserInfo):
+async def save_user( 
+    full_name: str = Form(...),
+    address: str = Form(...),
+    state: str = Form(...),
+    zip_code: str = Form(...)
+):
     """Save user info to PostgreSQL"""
     try:
         cur = conn.cursor()
