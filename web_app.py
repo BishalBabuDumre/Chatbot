@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import psycopg2, os, pickle, json
 
-from use_chatbot import get_bot_response   # 👈 import your chatbot function
+from use_chatbot import NLPChatbot   # 👈 import your chatbot function
 
 app = FastAPI()
 
@@ -47,10 +47,21 @@ async def save_user(
         return JSONResponse(content={"status": "error", "detail": str(e)})
 
 # 👇 Chatbot endpoint
-@app.post("/chat")
+@app.post("/api/chat")
 async def chat_endpoint(request: Request):
-    data = await request.json()
-    user_message = data.get("message", "")
-    
-    bot_reply = get_bot_response(user_message)   # use chatbot function
-    return JSONResponse(content={"reply": bot_reply})
+    """Handle chat messages"""
+    try:
+        data = await request.json()
+        user_input = data.get("message")
+        if not user_input:
+            raise HTTPException(status_code=400, detail="Message is required")
+
+        bot = NLPChatbot('chatbot_model.pkl')
+        response = bot.respond(user_input)
+        return JSONResponse({"response": response})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
