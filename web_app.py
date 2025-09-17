@@ -11,11 +11,11 @@ import os
 # -------------------------------
 app = FastAPI()
 
-# Mount static files (style.css, script.js) from doc/static/
-app.mount("/static", StaticFiles(directory=os.path.join("doc", "static")), name="static")
+# Mount static files (style.css, script.js) from docs/static/
+app.mount("/static", StaticFiles(directory=os.path.join("docs", "static")), name="static")
 
-# Setup Jinja2 templates (index.html in doc/)
-templates = Jinja2Templates(directory="doc")
+# Setup Jinja2 templates (index.html in docs/)
+templates = Jinja2Templates(directory="docs")
 
 # -------------------------------
 # PostgreSQL connection (AWS RDS)
