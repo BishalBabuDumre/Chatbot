@@ -1,3 +1,6 @@
+console.log("✅ script.js loaded!");
+alert("✅ script.js loaded!");
+
 // ---------------------------
 // Handle user info form
 // ---------------------------
