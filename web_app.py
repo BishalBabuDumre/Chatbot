@@ -7,8 +7,8 @@ import psycopg2, os
 app = FastAPI()
 
 # Serve static files (CSS/JS)
-app.mount("/static", StaticFiles(directory="doc/static"), name="static")
-templates = Jinja2Templates(directory="doc")
+app.mount("/static", StaticFiles(directory="docs/static"), name="static")
+templates = Jinja2Templates(directory="docs")
 
 # Database connection
 def get_connection():
