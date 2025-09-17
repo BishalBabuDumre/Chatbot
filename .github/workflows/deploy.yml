@@ -1,5 +1,8 @@
 name: Train Chatbot Model
 
+env:
+  MY_SECRET_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
 on:
   push:
     branches: [ main ]
