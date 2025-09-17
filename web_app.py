@@ -13,11 +13,11 @@ templates = Jinja2Templates(directory="docs")
 # Database connection
 def get_connection():
     return psycopg2.connect(
-        host=os.getenv("DB_HOST"),
-        port=os.getenv("DB_PORT"),
-        dbname=os.getenv("DB_NAME"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD")
+        host="chatbot-users.c9mci8a4irlr.us-west-1.rds.amazonaws.com",  # e.g. mydb.xxxxx.rds.amazonaws.com
+        database="postgres",
+        user="bdumrePostgres",
+        password=os.getenv("DB_PASSWORD"),
+        port="5432"
     )
 
 # Home page
