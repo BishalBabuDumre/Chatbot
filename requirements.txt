@@ -4,3 +4,4 @@ scikit-learn
 uvicorn
 jinja2
 psycopg2
+python-multipart
