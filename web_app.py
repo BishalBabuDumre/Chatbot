@@ -22,7 +22,7 @@ templates = Jinja2Templates(directory="docs")
 # -------------------------------
 conn = psycopg2.connect(
     host="chatbot-users.c9mci8a4irlr.us-west-1.rds.amazonaws.com",  # e.g. mydb.xxxxx.rds.amazonaws.com
-    database="chatbot-users",
+    database="postgres",
     user="bdumrePostgres",
     password=os.getenv("DB_PASSWORD"),
     port="5432"
