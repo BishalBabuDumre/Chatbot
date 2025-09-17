@@ -1,10 +1,10 @@
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Form, Request, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-import psycopg2, os, pickle, json
+import psycopg2, os
 
-from use_chatbot import NLPChatbot   # 👈 import your chatbot function
+from use_chatbot import NLPChatbot   # your chatbot class
 
 app = FastAPI()
 
@@ -12,9 +12,13 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="docs/static"), name="static")
 templates = Jinja2Templates(directory="docs")
 
+# ---- Load chatbot once ----
+bot = NLPChatbot("chatbot_model.pkl")
+
+# Database connection
 def get_connection():
     return psycopg2.connect(
-        host="chatbot-users.c9mci8a4irlr.us-west-1.rds.amazonaws.com",  # e.g. mydb.xxxxx.rds.amazonaws.com
+        host="chatbot-users.c9mci8a4irlr.us-west-1.rds.amazonaws.com",
         database="postgres",
         user="bdumrePostgres",
         password=os.getenv("DB_PASSWORD"),
@@ -47,18 +51,16 @@ async def save_user(
         return JSONResponse(content={"status": "error", "detail": str(e)})
 
 # 👇 Chatbot endpoint
-@app.post("/api/chat")
+@app.post("/chat")   # keep this consistent with script.js
 async def chat_endpoint(request: Request):
-    """Handle chat messages"""
     try:
         data = await request.json()
         user_input = data.get("message")
         if not user_input:
             raise HTTPException(status_code=400, detail="Message is required")
 
-        bot = NLPChatbot('chatbot_model.pkl')
-        response = bot.respond(user_input)
-        return JSONResponse({"response": response})
+        response = bot.respond(user_input)   # reuse the preloaded bot
+        return JSONResponse({"reply": response})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
