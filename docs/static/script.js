@@ -1,9 +1,35 @@
-console.log("✅ script.js loaded!");
-alert("✅ script.js loaded!");
+document.addEventListener("DOMContentLoaded", function() {
+    console.log("✅ script.js loaded!");
+    
+    // Handle user info form
+    const userForm = document.getElementById("user-form");
+    if (userForm) {
+        userForm.addEventListener("submit", async function (e) {
+            e.preventDefault(); // This should prevent page reload
+            console.log("Form submitted"); // Debug log
+            
+            const formData = new FormData(this);
 
-// ---------------------------
-// Handle user info form
-// ---------------------------
+            try {
+                let response = await fetch("/save_user", {
+                    method: "POST",
+                    body: formData
+                });
+
+                let result = await response.json();
+
+                if (result.status === "success") {
+                    console.log("✅ User info saved to DB");
+                    document.getElementById("user-form-container").style.display = "none";
+                    document.getElementById("chat-container").style.display = "block";
+                } else {
+                    alert("❌ Error saving user info: " + result.detail);
+                }
+            } catch (err) {
+                alert("❌ Network error while saving user info: " + err);
+            }
+        });
+    }
 document.getElementById("user-form").addEventListener("submit", async function (e) {
     e.preventDefault(); // stop page reload
 
@@ -82,3 +108,4 @@ function appendMessage(sender, text, className) {
     chatBox.appendChild(msgDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
+});
