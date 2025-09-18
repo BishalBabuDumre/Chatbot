@@ -1,35 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot</title>
-    <!-- Load CSS from /static -->
-    <link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8">
+  <title>User Information</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/script.js" defer></script>
 </head>
 <body>
-    <!-- User Info Form -->
-    <div class="chat-container" id="user-form-container">
-        <h2>Welcome! Please provide your details:</h2>
-        <form id="user-form">
-            <input type="text" name="full_name" placeholder="Full Name" required><br><br>
-            <input type="text" name="address" placeholder="Address" required><br><br>
-            <input type="text" name="state" placeholder="State" required><br><br>
-            <input type="text" name="zip_code" placeholder="Zip Code" required><br><br>
-            <button type="submit">Continue</button>
-        </form>
-    </div>
+  <h2>Enter Your Information</h2>
 
-    <!-- Chat UI (hidden until form is submitted) -->
-    <div class="chat-container" id="chat-container" style="display:none;">
-        <div id="chat-box" class="chat-box"></div>
-        <div class="input-area">
-            <input type="text" id="user-input" placeholder="Type your message...">
-            <button id="send-btn">Send</button>
-        </div>
-    </div>
+  <!-- Input Form -->
+  <form id="userForm">
+    <label for="name">Name:</label><br>
+    <input type="text" id="name" name="name" required><br><br>
 
-    <!-- Load JS from /static -->
-    <script src="/static/script.js"></script>
+    <label for="address">Address:</label><br>
+    <input type="text" id="address" name="address" required><br><br>
+
+    <label for="state">State:</label><br>
+    <input type="text" id="state" name="state" required><br><br>
+
+    <label for="zip_code">Zip Code:</label><br>
+    <input type="text" id="zip_code" name="zip_code" required><br><br>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <p id="responseMessage"></p>
+
+  <!-- Chatbot -->
+  <div id="chatContainer">
+    <h2>Chatbot</h2>
+    <div id="chatBox"></div>
+    <input type="text" id="chatInput" placeholder="Type your message...">
+    <button id="chatSend">Send</button>
+  </div>
 </body>
 </html>
