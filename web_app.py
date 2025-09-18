@@ -41,7 +41,7 @@ async def submit_form(
         cur = conn.cursor()
         cur.execute(
             "INSERT INTO users  VALUES 
-            (name, address, state, zip_code, datetime.now())
+            (name, address, state, zip_code, datetime.now())"
         )
         conn.commit()
         cur.close()
