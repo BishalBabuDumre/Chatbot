@@ -2,30 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>User Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="container">
-        <h2>User Information Form</h2>
-        <form id="userForm">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required><br><br>
-
-            <label for="address">Address:</label>
-            <input type="text" id="address" name="address" required><br><br>
-
-            <label for="state">State:</label>
-            <input type="text" id="state" name="state" required><br><br>
-
-            <label for="zip">Zip:</label>
-            <input type="text" id="zip" name="zip" required><br><br>
-
-            <button type="submit">Submit</button>
-        </form>
-        <p id="responseMessage"></p>
+    <div class="chat-container">
+        <div id="chat-box" class="chat-box"></div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button id="send-btn">Send</button>
+        </div>
     </div>
-
     <script src="/static/script.js"></script>
 </body>
 </html>
