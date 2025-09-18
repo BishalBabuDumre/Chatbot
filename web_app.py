@@ -53,24 +53,7 @@ async def submit_form(
 # ---------------------------
 # Chatbot endpoint with debug
 # ---------------------------
-@app.post("/chat")
-async def chat_endpoint(request: Request):
-    try:
-        data = await request.json()
-        user_input = data.get("message")
-        if not user_input:
-            raise HTTPException(status_code=400, detail="Message is required")
 
-        print(f"💬 User asked: {user_input}")  # DEBUG
-
-        response = bot.respond(user_input)
-
-        print(f"🤖 Bot replied: {response}")  # DEBUG
-
-        return JSONResponse({"reply": response})
-    except Exception as e:
-        print("❌ Chat error:", e)  # DEBUG
-        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn
