@@ -1,32 +1,46 @@
-// /static/script.js
-window.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById("userForm");
-  if (!form) { console.error("Form #userForm not found"); return; }
+document.addEventListener('DOMContentLoaded', () => {
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    try {
-      const data = {
-        name: document.getElementById("name").value,
-        address: document.getElementById("address").value,
-        state: document.getElementById("state").value,
-        zip: document.getElementById("zip").value
-      };
-
-      console.log("Submitting to /submit with:", data); // <-- helps debugging
-
-      const response = await fetch("/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-
-      const result = await response.json();
-      document.getElementById("responseMessage").innerText = result.message || "Done";
-      console.log("Server response:", result);
-    } catch (err) {
-      console.error("Submit failed:", err);
-      document.getElementById("responseMessage").innerText = "Submit failed (see console).";
+    function addMessage(text, isUser) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', isUser ? 'user-message' : 'bot-message');
+        messageDiv.textContent = text;
+        chatBox.appendChild(messageDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
-  });
+
+    async function sendMessage() {
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        addMessage(message, true);
+        userInput.value = '';
+
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            addMessage(data.response, false);
+        } catch (error) {
+            addMessage("Sorry, I'm having trouble responding right now.", false);
+            console.error('Error:', error);
+        }
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
 });
