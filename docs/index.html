@@ -1,39 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>User Information</title>
-  <link rel="stylesheet" href="/static/style.css">
-  <script src="/static/script.js" defer></script>
+    <meta charset="UTF-8">
+    <title>User Form</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <h2>Enter Your Information</h2>
+    <div class="container">
+        <h2>User Information Form</h2>
+        <form id="userForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br><br>
 
-  <!-- Input Form -->
-  <form id="userForm">
-    <label for="name">Name:</label><br>
-    <input type="text" id="name" name="name" required><br><br>
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" required><br><br>
 
-    <label for="address">Address:</label><br>
-    <input type="text" id="address" name="address" required><br><br>
+            <label for="state">State:</label>
+            <input type="text" id="state" name="state" required><br><br>
 
-    <label for="state">State:</label><br>
-    <input type="text" id="state" name="state" required><br><br>
+            <label for="zip">Zip:</label>
+            <input type="text" id="zip" name="zip" required><br><br>
 
-    <label for="zip_code">Zip Code:</label><br>
-    <input type="text" id="zip_code" name="zip_code" required><br><br>
+            <button type="submit">Submit</button>
+        </form>
+        <p id="responseMessage"></p>
+    </div>
 
-    <button type="submit">Submit</button>
-  </form>
-
-  <p id="responseMessage"></p>
-
-  <!-- Chatbot -->
-  <div id="chatContainer">
-    <h2>Chatbot</h2>
-    <div id="chatBox"></div>
-    <input type="text" id="chatInput" placeholder="Type your message...">
-    <button id="chatSend">Send</button>
-  </div>
+    <script src="/static/script.js"></script>
 </body>
 </html>
