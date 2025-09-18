@@ -40,7 +40,7 @@ async def submit_form(
         conn = get_connection()
         cur = conn.cursor()
         cur.execute(
-            "INSERT INTO users (full_name, address, state, zip_code, created_at) VALUES (%s, %s, %s, %s, %s)",
+            "INSERT INTO users  VALUES 
             (name, address, state, zip_code, datetime.now())
         )
         conn.commit()
