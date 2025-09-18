@@ -2,9 +2,10 @@ from fastapi import FastAPI, Form, Request, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-import psycopg2, os
-
+import psycopg2
+import os
 from use_chatbot import NLPChatbot
+from datetime import datetime
 
 app = FastAPI()
 
@@ -28,29 +29,26 @@ def get_connection():
 async def get_home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-@app.post("/save_user")
-async def save_user(
-    full_name: str = Form(...),
+@app.post("/submit")
+async def submit_form(
+    name: str = Form(...),
     address: str = Form(...),
     state: str = Form(...),
     zip_code: str = Form(...)
 ):
     try:
-        print("📥 Received user info:", full_name, address, state, zip_code)  # DEBUG
         conn = get_connection()
         cur = conn.cursor()
         cur.execute(
-            "INSERT INTO users (full_name, address, state, zip_code) VALUES (%s, %s, %s, %s)",
-            (full_name, address, state, zip_code)
+            "INSERT INTO users_info (name, address, state, zip, created_at) VALUES (%s, %s, %s, %s, %s)",
+            (name, address, state, zip_code, datetime.now())
         )
         conn.commit()
         cur.close()
         conn.close()
-        print("✅ User info inserted into DB")  # DEBUG
-        return JSONResponse(content={"status": "success"})
+        return JSONResponse({"status": "success", "message": "Data saved successfully"})
     except Exception as e:
-        print("❌ Error saving user:", e)  # DEBUG
-        return JSONResponse(content={"status": "error", "detail": str(e)})
+        return JSONResponse({"status": "error", "message": str(e)})
 
 # ---------------------------
 # Chatbot endpoint with debug
