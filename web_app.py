@@ -1,15 +1,13 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 import psycopg2, os
 from datetime import datetime
 
 app = FastAPI()
 
-# Serve static files (JS, CSS, images) from docs/static
+# Serve static files (JS, CSS, images)
 app.mount("/static", StaticFiles(directory="docs/static"), name="static")
-templates = Jinja2Templates(directory="docs")
 
 def get_connection():
     return psycopg2.connect(
@@ -20,7 +18,7 @@ def get_connection():
         port="5432",
     )
 
-# ✅ New root route: serve docs/index.html when someone goes to "/"
+# ✅ Serve index.html at root
 @app.get("/")
 async def serve_index():
     return FileResponse("docs/index.html")
@@ -46,3 +44,8 @@ async def submit_user(request: Request):
         return JSONResponse({"message": "User info saved successfully"})
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
+
+# ✅ Catch-all: serve index.html for any unknown path (except /static/*)
+@app.get("/{full_path:path}")
+async def catch_all(full_path: str):
+    return FileResponse("docs/index.html")
