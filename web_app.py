@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import psycopg2, os
@@ -7,7 +7,7 @@ from datetime import datetime
 
 app = FastAPI()
 
-# Static files
+# Serve static files (JS, CSS, images) from docs/static
 app.mount("/static", StaticFiles(directory="docs/static"), name="static")
 templates = Jinja2Templates(directory="docs")
 
@@ -19,6 +19,11 @@ def get_connection():
         host="chatbot-users.c9mci8a4irlr.us-west-1.rds.amazonaws.com",
         port="5432",
     )
+
+# ✅ New root route: serve docs/index.html when someone goes to "/"
+@app.get("/")
+async def serve_index():
+    return FileResponse("docs/index.html")
 
 @app.post("/submit_user")
 async def submit_user(request: Request):
