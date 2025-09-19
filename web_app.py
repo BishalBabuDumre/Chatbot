@@ -49,3 +49,16 @@ async def submit_user(request: Request):
 @app.get("/{full_path:path}")
 async def catch_all(full_path: str):
     return FileResponse("docs/index.html")
+
+@app.get("/dbtest")
+async def dbtest():
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT NOW();")
+        result = cur.fetchone()
+        cur.close()
+        conn.close()
+        return {"db_time": result[0]}
+    except Exception as e:
+        return {"error": str(e)}
