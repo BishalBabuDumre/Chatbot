@@ -1,42 +1,43 @@
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from use_chatbot import NLPChatbot  # import your existing function
-import os
+import psycopg2, os
+from datetime import datetime
 
 app = FastAPI()
 
-# Mount static files (for CSS/JS)
+# Static files
 app.mount("/static", StaticFiles(directory="docs/static"), name="static")
-
-# Templates for HTML responses
 templates = Jinja2Templates(directory="docs")
 
-@app.get("/", response_class=HTMLResponse)
-async def chat_page(request: Request):
-    """Serve the main chat interface"""
-    return templates.TemplateResponse("index.html", {"request": request})
+def get_connection():
+    return psycopg2.connect(
+        dbname="postgres",
+        user="bdumrePostgres",
+        password=os.getenv("DB_PASSWORD"),
+        host="chatbot-users.c9mci8a4irlr.us-west-1.rds.amazonaws.com",
+        port="5432",
+    )
 
-@app.post("/api/chat")
-async def chat_endpoint(request: Request):
-    """Handle chat messages"""
+@app.post("/submit_user")
+async def submit_user(request: Request):
+    data = await request.json()
+    full_name = data.get("full_name")
+    address = data.get("address")
+    state = data.get("state")
+    zip_code = data.get("zip_code")
+
     try:
-        data = await request.json()
-        user_input = data.get("message")
-        if not user_input:
-            raise HTTPException(status_code=400, detail="Message is required")
-
-        bot = NLPChatbot('chatbot_model.pkl')
-        response = bot.respond(user_input)
-        return JSONResponse({"response": response})
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO users (full_name, address, state, zip_code, created_at)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (full_name, address, state, zip_code, datetime.utcnow()))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return JSONResponse({"message": "User info saved successfully"})
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
-#if __name__ == "__main__":
-#    import uvicorn
-#    uvicorn.run(app, host="0.0.0.0", port=8000)
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+        return JSONResponse({"error": str(e)}, status_code=500)
