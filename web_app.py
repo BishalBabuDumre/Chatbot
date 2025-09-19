@@ -45,11 +45,6 @@ async def submit_user(request: Request):
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
 
-# ✅ Catch-all: serve index.html for any unknown path (except /static/*)
-@app.get("/{full_path:path}")
-async def catch_all(full_path: str):
-    return FileResponse("docs/index.html")
-
 @app.get("/dbtest")
 async def dbtest():
     try:
@@ -62,3 +57,8 @@ async def dbtest():
         return {"db_time": result[0]}
     except Exception as e:
         return {"error": str(e)}
+
+# ✅ Catch-all: serve index.html for any unknown path (except /static/*)
+@app.get("/{full_path:path}")
+async def catch_all(full_path: str):
+    return FileResponse("docs/index.html")
