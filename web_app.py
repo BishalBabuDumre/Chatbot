@@ -50,7 +50,8 @@ async def submit_user(request: Request):
 @app.post("/api/chat")
 async def chat_endpoint(request: Request):
     """Handle chat messages"""
-    data = await request.json()
+    try:
+        data = await request.json()
         user_input = data.get("message")
         if not user_input:
             raise HTTPException(status_code=400, detail="Message is required")
