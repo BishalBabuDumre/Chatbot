@@ -2,9 +2,11 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 import psycopg2, os
+from use_chatbot import NLPChatbot
 from datetime import datetime
 
 app = FastAPI()
+bot = NLPChatbot("chatbot_model.pkl")
 
 # Serve static files (JS, CSS, images)
 app.mount("/static", StaticFiles(directory="docs/static"), name="static")
@@ -44,6 +46,20 @@ async def submit_user(request: Request):
         return JSONResponse({"message": "User info saved successfully"})
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
+
+@app.post("/api/chat")
+async def chat_endpoint(request: Request):
+    """Handle chat messages"""
+    data = await request.json()
+        user_input = data.get("message")
+        if not user_input:
+            raise HTTPException(status_code=400, detail="Message is required")
+
+        bot = NLPChatbot('chatbot_model.pkl')
+        response = bot.respond(user_input)
+        return JSONResponse({"response": response})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/dbtest")
 async def dbtest():
