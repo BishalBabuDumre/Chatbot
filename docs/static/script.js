@@ -11,7 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const userData = Object.fromEntries(formData.entries());
 
             try {
-                let response = await fetch("/submit_user", {
+                // Always use current origin to avoid /docs/submit_user issue
+                const apiUrl = `${window.location.origin}/submit_user`;
+
+                let response = await fetch(apiUrl, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(userData),
@@ -22,7 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     userFormContainer.style.display = "none";
                     chatContainer.style.display = "block";
                 } else {
-                    alert("Failed to save user info.");
+                    const error = await response.json();
+                    alert("Failed to save user info: " + (error.error || response.status));
                 }
             } catch (err) {
                 console.error(err);
