@@ -11,8 +11,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const userData = Object.fromEntries(formData.entries());
 
             try {
-                // Always use current origin to avoid /docs/submit_user issue
-                const apiUrl = `${window.location.origin}/submit_user`;
+                // Allow optional API prefix (e.g. /api)
+                const apiPrefix = window.API_PREFIX || "";  
+                const apiUrl = `${window.location.origin}${apiPrefix}/submit_user`;
 
                 let response = await fetch(apiUrl, {
                     method: "POST",
