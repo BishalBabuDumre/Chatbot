@@ -10,11 +10,11 @@
     <!-- Initial Form Screen -->
     <div id="user-form-container">
         <h2>Tell us about yourself</h2>
-        <form id="user-form">
-            <input type="text" name="full_name" placeholder="Full Name" required><br>
-            <input type="text" name="address" placeholder="Address" required><br>
-            <input type="text" name="state" placeholder="State" required><br>
-            <input type="text" name="zip_code" placeholder="Zip Code" required><br>
+        <form id="user-form" method="post" onsubmit="return false;">
+            <input name="full_name" placeholder="Full Name" required>
+            <input name="address" placeholder="Address" required>
+            <input name="state" placeholder="State" required>
+            <input name="zip_code" placeholder="Zip Code" required>
             <button type="submit">Submit</button>
         </form>
     </div>
