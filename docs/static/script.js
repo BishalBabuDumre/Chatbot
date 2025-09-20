@@ -44,43 +44,54 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ----- CHATBOT LOGIC -----
+    async function sendMessage() {
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        // Show user message
+        const userMsgElem = document.createElement("div");
+        userMsgElem.textContent = "You: " + message;
+        chatBox.appendChild(userMsgElem);
+
+        // Call backend
+        try {
+            const apiPrefix = window.API_PREFIX || "";
+            const chatUrl = `${window.location.origin}${apiPrefix}/chat`;
+
+            const response = await fetch(chatUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message }),
+            });
+
+            const data = await response.json();
+
+            // Show reply
+            const botMsgElem = document.createElement("div");
+            botMsgElem.textContent = "Bot: " + (data.reply || "No reply");
+            chatBox.appendChild(botMsgElem);
+
+            // Scroll to bottom
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            userInput.value = "";
+        } catch (err) {
+            console.error("Chat error:", err);
+            const botMsgElem = document.createElement("div");
+            botMsgElem.textContent = "Bot: [Error connecting to server]";
+            chatBox.appendChild(botMsgElem);
+        }
+    }
+
     if (sendBtn) {
-        sendBtn.addEventListener("click", async () => {
-            const message = userInput.value.trim();
-            if (!message) return;
+        // Click send
+        sendBtn.addEventListener("click", sendMessage);
 
-            // Show user message
-            const userMsgElem = document.createElement("div");
-            userMsgElem.textContent = "You: " + message;
-            chatBox.appendChild(userMsgElem);
-
-            // Call backend
-            try {
-                const apiPrefix = window.API_PREFIX || "";
-                const chatUrl = `${window.location.origin}${apiPrefix}/chat`;
-
-                const response = await fetch(chatUrl, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ message }),
-                });
-
-                const data = await response.json();
-
-                // Show reply
-                const botMsgElem = document.createElement("div");
-                botMsgElem.textContent = "Bot: " + (data.reply || "No reply");
-                chatBox.appendChild(botMsgElem);
-
-                // Scroll to bottom
-                chatBox.scrollTop = chatBox.scrollHeight;
-
-                userInput.value = "";
-            } catch (err) {
-                console.error("Chat error:", err);
-                const botMsgElem = document.createElement("div");
-                botMsgElem.textContent = "Bot: [Error connecting to server]";
-                chatBox.appendChild(botMsgElem);
+        // Press Enter to send
+        userInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault(); // prevent form reload
+                sendMessage();
             }
         });
     }
