@@ -55,8 +55,6 @@ async def chat_endpoint(request: Request):
         user_input = data.get("message")
         if not user_input:
             raise HTTPException(status_code=400, detail="Message is required")
-
-        bot = NLPChatbot('chatbot_model.pkl')
         response = bot.respond(user_input)
         return JSONResponse({"response": response})
     except Exception as e:
