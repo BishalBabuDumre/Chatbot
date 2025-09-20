@@ -47,7 +47,7 @@ async def submit_user(request: Request):
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
 
-@app.post("/api/chat")
+@app.post("/chat")
 async def chat_endpoint(request: Request):
     """Handle chat messages"""
     try:
@@ -56,7 +56,7 @@ async def chat_endpoint(request: Request):
         if not user_input:
             raise HTTPException(status_code=400, detail="Message is required")
         response = bot.respond(user_input)
-        return JSONResponse({"response": response})
+        return JSONResponse({"reply": response})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
