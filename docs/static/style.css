@@ -110,3 +110,10 @@ body {
 .bot-message .timestamp {
     text-align: left;
 }
+
+.bot-message.typing {
+    font-style: italic;
+    color: #666;
+    background: transparent;
+    box-shadow: none;
+}
