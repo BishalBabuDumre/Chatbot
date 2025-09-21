@@ -57,7 +57,11 @@ document.addEventListener("DOMContentLoaded", () => {
         userMsgElem.innerHTML = `<div>${message}</div><div class="timestamp">${formatTime(new Date())}</div>`;
         chatBox.appendChild(userMsgElem);
 
-        // Call backend
+        // Scroll to bottom
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        userInput.value = "";
+
         try {
             const apiPrefix = window.API_PREFIX || "";
             const chatUrl = `${window.location.origin}${apiPrefix}/chat`;
@@ -70,14 +74,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const data = await response.json();
 
-            // Show reply
-            const botMsgElem = document.createElement("div");
-            botMsgElem.classList.add("message", "bot-message");
-            botMsgElem.innerHTML = `<div>${data.reply || "No reply"}</div><div class="timestamp">${formatTime(new Date())}</div>`;
-            chatBox.appendChild(botMsgElem);
-
+            // ---- Typing indicator ----
+            const typingElem = document.createElement("div");
+            typingElem.classList.add("message", "bot-message", "typing");
+            typingElem.textContent = "Bot is typing...";
+            chatBox.appendChild(typingElem);
             chatBox.scrollTop = chatBox.scrollHeight;
-            userInput.value = "";
+
+            // Wait ~1 second before showing real reply
+            setTimeout(() => {
+                chatBox.removeChild(typingElem);
+
+                const botMsgElem = document.createElement("div");
+                botMsgElem.classList.add("message", "bot-message");
+                botMsgElem.innerHTML = `<div>${data.reply || "No reply"}</div><div class="timestamp">${formatTime(new Date())}</div>`;
+                chatBox.appendChild(botMsgElem);
+
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 1000); // delay in ms
         } catch (err) {
             console.error("Chat error:", err);
             const botMsgElem = document.createElement("div");
@@ -88,8 +102,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (sendBtn) {
+        // Click send
         sendBtn.addEventListener("click", sendMessage);
 
+        // Press Enter to send
         userInput.addEventListener("keypress", (e) => {
             if (e.key === "Enter") {
                 e.preventDefault();
