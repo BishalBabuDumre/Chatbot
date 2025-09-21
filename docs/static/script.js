@@ -77,9 +77,14 @@ document.addEventListener("DOMContentLoaded", () => {
             // ---- Typing indicator ----
             const typingElem = document.createElement("div");
             typingElem.classList.add("message", "bot-message", "typing");
-            typingElem.textContent = "Bot is typing...";
+            typingElem.innerHTML = `
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            `;
             chatBox.appendChild(typingElem);
             chatBox.scrollTop = chatBox.scrollHeight;
+
 
             // Wait ~1 second before showing real reply
             setTimeout(() => {
