@@ -9,6 +9,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const userInput = document.getElementById("user-input");
     const sendBtn = document.getElementById("send-btn");
 
+    // Helper: format time like "10:45 PM"
+    function formatTime(date) {
+        return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+
     // ----- USER FORM LOGIC -----
     if (userForm) {
         userForm.addEventListener("submit", async (e) => {
@@ -18,7 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const userData = Object.fromEntries(formData.entries());
 
             try {
-                // Allow optional API prefix (e.g. /api in Render)
                 const apiPrefix = window.API_PREFIX || "";
                 const apiUrl = `${window.location.origin}${apiPrefix}/submit_user`;
 
@@ -29,9 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
                 if (response.ok) {
-                    // Hide form and show chatbot
                     userFormContainer.style.display = "none";
-                    chatContainer.style.display = "block";
+                    chatContainer.style.display = "flex"; // flex so chatbox expands
                 } else {
                     const error = await response.json();
                     alert("Failed to save user info: " + (error.error || response.status));
@@ -50,7 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Show user message
         const userMsgElem = document.createElement("div");
-        userMsgElem.textContent = "You: " + message;
+        userMsgElem.classList.add("message", "user-message");
+        userMsgElem.innerHTML = `<div>${message}</div><div class="timestamp">${formatTime(new Date())}</div>`;
         chatBox.appendChild(userMsgElem);
 
         // Call backend
@@ -68,29 +72,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Show reply
             const botMsgElem = document.createElement("div");
-            botMsgElem.textContent = "Bot: " + (data.reply || "No reply");
+            botMsgElem.classList.add("message", "bot-message");
+            botMsgElem.innerHTML = `<div>${data.reply || "No reply"}</div><div class="timestamp">${formatTime(new Date())}</div>`;
             chatBox.appendChild(botMsgElem);
 
-            // Scroll to bottom
             chatBox.scrollTop = chatBox.scrollHeight;
-
             userInput.value = "";
         } catch (err) {
             console.error("Chat error:", err);
             const botMsgElem = document.createElement("div");
-            botMsgElem.textContent = "Bot: [Error connecting to server]";
+            botMsgElem.classList.add("message", "bot-message");
+            botMsgElem.innerHTML = `<div>Bot: [Error connecting to server]</div><div class="timestamp">${formatTime(new Date())}</div>`;
             chatBox.appendChild(botMsgElem);
         }
     }
 
     if (sendBtn) {
-        // Click send
         sendBtn.addEventListener("click", sendMessage);
 
-        // Press Enter to send
         userInput.addEventListener("keypress", (e) => {
             if (e.key === "Enter") {
-                e.preventDefault(); // prevent form reload
+                e.preventDefault();
                 sendMessage();
             }
         });
