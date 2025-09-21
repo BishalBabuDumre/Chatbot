@@ -75,3 +75,38 @@ body {
     align-self: flex-start;
     border-bottom-left-radius: 4px;
 }
+
+.message {
+    max-width: 75%;
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    opacity: 0;              /* start transparent */
+    transform: translateY(10px); /* start slightly lower */
+    animation: fadeInUp 0.3s ease forwards; /* run animation */
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.timestamp {
+    font-size: 11px;
+    color: #888;
+    margin-top: 4px;
+}
+.user-message .timestamp {
+    text-align: right;
+}
+.bot-message .timestamp {
+    text-align: left;
+}
