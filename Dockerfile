@@ -1,5 +1,5 @@
 # Use an official lightweight Python image
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -17,8 +17,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copy requirements first (to leverage Docker layer caching)
 COPY requirements.txt .
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Python dependencies and immediately clean up build tools
+RUN pip install --no-cache-dir -r requirements.txt && \
+    apt-get purge -y build-essential && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy the entire project
 COPY . .
@@ -26,6 +29,5 @@ COPY . .
 # Expose port (Render will auto-assign)
 EXPOSE 8000
 
-# Start your app (FastAPI example with uvicorn)
-# If Flask: change to "flask run --host=0.0.0.0 --port=8000"
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+# Start your FastAPI app with uvicorn
+CMD ["uvicorn", "web_app:app", "--host", "0.0.0.0", "--port", "8000"]
