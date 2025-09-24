@@ -1,0 +1,44 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Logs & temp files
+*.log
+*.out
+*.err
+
+# Git & CI
+.git
+.gitignore
+.gitattributes
+.github/
+
+# IDE/project configs
+.vscode/
+.idea/
+
+# Tests & coverage
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Environment & secrets
+.env
+*.env
+.env.*
+
+# Databases & large local files
+*.db
+*.sqlite
+*.csv
+*.zip
+*.tar
+*.gz
