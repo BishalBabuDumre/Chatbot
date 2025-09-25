@@ -48,13 +48,23 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
+          const bodyLines = [
+            `Activity type: ${context.eventName}`,
+            `Triggered by: @${context.actor}`,
+            `Branch: ${context.ref}`,
+            context.payload.head_commit ? `Commit message: ${context.payload.head_commit.message}` : '',
+            context.payload.head_commit ? `Commit SHA: ${context.sha}` : '',
+            `View details: ${context.payload.repository.html_url}/actions/runs/${context.runId}`
+          ].filter(Boolean).join('\n\n');
+
           github.rest.issues.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
             title: `Repository activity by ${context.actor}`,
-            body: `Activity type: ${context.event_name}\n\nTriggered by: @${context.actor}\n\nView details: ${context.payload.repository.html_url}/actions/runs/${context.runId}`,
+            body: bodyLines,
             labels: ['notification']
           })
+
 
   deploy:
     needs: train
