@@ -8,20 +8,20 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Create working directory
 WORKDIR /app
 
-# Install system dependencies (if needed)
+# Install build dependencies (only needed for psycopg2 compilation)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    libpq-dev \
     curl \
-    && rm -rf /var/lib/apt/lists/*
+ && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first (to leverage Docker layer caching)
 COPY requirements.txt .
 
-# Install Python dependencies and immediately clean up build tools
-RUN pip install --no-cache-dir -r requirements.txt && \
-    apt-get purge -y build-essential && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/*
+# Install Python dependencies, then remove build deps (slim final image)
+RUN pip install --no-cache-dir -r requirements.txt \
+ && apt-get purge -y --auto-remove build-essential libpq-dev \
+ && rm -rf /var/lib/apt/lists/*
 
 # Copy the entire project
 COPY . .
