@@ -108,3 +108,6 @@ jobs:
       run: |
         IMAGE_NAME=ghcr.io/bishalbabudumre/chatbot:latest
         docker push $IMAGE_NAME
+    
+    - name: Trigger Render Deploy
+      run: curl -X POST "https://api.render.com/deploy/srv-d3d19ka4d50c73cva2bg?key=ky05REsgGI0"
